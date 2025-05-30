@@ -1,0 +1,42 @@
+[1mdiff --cc README.md[m
+[1mindex 8409a6c,624ba25..0000000[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@@ -1,1 -1,32 +1,36 @@@[m
+[31m- # centralized_ai[m
+[32m++<<<<<<< HEAD[m
+[32m++# centralized_ai[m
+[32m++=======[m
+[32m+ # Centralized AI[m
+[32m+ [m
+[32m+ This project is a React-based web application bootstrapped with Vite. It features a modern, dark-themed homepage inspired by ChatGPT, including:[m
+[32m+ [m
+[32m+ - A header with logo/title and login/signup buttons[m
+[32m+ - A large, centered prompt box with "What can I help with?" text[m
+[32m+ - A styled input and action buttons (Attach, Search, Reason, Voice)[m
+[32m+ - Responsive and accessible design using custom CSS[m
+[32m+ [m
+[32m+ ## Getting Started[m
+[32m+ [m
+[32m+ 1. **Install dependencies:**[m
+[32m+    ```powershell[m
+[32m+    npm install[m
+[32m+    ```[m
+[32m+ 2. **Start the development server:**[m
+[32m+    ```powershell[m
+[32m+    npm run dev[m
+[32m+    ```[m
+[32m+ 3. Open [http://localhost:5173](http://localhost:5173) in your browser to view the app.[m
+[32m+ [m
+[32m+ ## Project Structure[m
+[32m+ - `src/App.jsx`: Main app component and homepage layout[m
+[32m+ - `src/App.css`: Custom styles for the homepage[m
+[32m+ - `.github/copilot-instructions.md`: Copilot custom instructions[m
+[32m+ [m
+[32m+ ## Customization[m
+[32m+ - Replace placeholder text, logo, or button actions as needed for your use case.[m
+[32m+ [m
+[32m+ ---[m
+[32m+ [m
+[32m+ Built with [Vite](https://vitejs.dev/) and [React](https://react.dev/).[m
+[32m++>>>>>>> db55825 (Initial commit: React Vite app with Home, Login, Signup pages and routing)[m
