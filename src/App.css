@@ -268,6 +268,8 @@ body {
   outline: none;
   width: calc(100% - 2rem);
   font-family: inherit;
+  z-index: 200;
+  position: relative;
 }
 
 .prompt-input:focus {
