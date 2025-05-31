@@ -103,6 +103,7 @@ function Home({ user, setUser }) {
                 </div>
               </div>
             )}
+            <div className="bottom-spacer"></div>
           </div>
         )}
         <div className={`prompt-box ${isChatActive ? 'chat-active' : ''}`}>
