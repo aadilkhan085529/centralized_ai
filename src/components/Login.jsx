@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
+const base_url = 'https://aadil.pythonanywhere.com';
+
+
 function Login({ setUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,12 +15,18 @@ function Login({ setUser }) {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('http://localhost:4000/login', {
+      const res = await fetch(`${base_url}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      const data = await res.json();
+      let data = {};
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        throw new Error('Server returned an invalid response.');
+      }
       if (!res.ok) throw new Error(data.error || 'Login failed');
       localStorage.setItem('cai_user', JSON.stringify(data.user));
       setUser(data.user);

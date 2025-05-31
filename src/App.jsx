@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Login from './components/Login';
 import Signup from './components/Signup';
 
+const base_url = 'https://aadil.pythonanywhere.com';
+
 function Home({ user, setUser }) {
   const navigate = useNavigate();
   const [input, setInput] = useState("");
@@ -31,7 +33,7 @@ function Home({ user, setUser }) {
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
 
     try {
-      const response = await fetch('https://aadil.pythonanywhere.com/api/gemini', {
+      const response = await fetch(`${base_url}/api/gemini`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

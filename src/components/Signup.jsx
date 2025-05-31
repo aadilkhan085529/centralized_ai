@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
+const base_url = 'https://aadil.pythonanywhere.com';
+
 function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,12 +15,18 @@ function Signup() {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('http://localhost:4000/signup', {
+      const res = await fetch(`${base_url}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
       });
-      const data = await res.json();
+      let data = {};
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        throw new Error('Server returned an invalid response.');
+      }
       if (!res.ok) throw new Error(data.error || 'Signup failed');
       // Optionally store user info/token here
       navigate('/login');
