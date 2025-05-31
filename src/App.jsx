@@ -31,7 +31,7 @@ function Home({ user, setUser }) {
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
 
     try {
-      const response = await fetch('/api/gemini', {
+      const response = await fetch('https://aadil.pythonanywhere.com/api/gemini', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
