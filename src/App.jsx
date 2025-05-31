@@ -8,10 +8,9 @@ function Home({ user, setUser }) {
   const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [isChatActive, setIsChatActive] = useState(false);
-  const [showResponse, setShowResponse] = useState(false);
-  const [response, setResponse] = useState("");
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [errorTimeout, setErrorTimeout] = useState(null);
+  const chatContentRef = useRef(null);
   const inputRef = useRef(null);
 
   const handleLogout = () => {
@@ -21,50 +20,39 @@ function Home({ user, setUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
+
+    const userMessage = input.trim();
+    setInput("");
     setIsChatActive(true);
     setLoading(true);
-    setShowResponse(false);
-    setResponse("");
-    if (errorTimeout) clearTimeout(errorTimeout);
-    // Set a timeout to show error only after 20 seconds
-    const timeout = setTimeout(() => {
-      setLoading(false);
-      setResponse('Sorry, there was an error connecting to Gemini.');
-      setShowResponse(true);
-    }, 20000);
-    setErrorTimeout(timeout);
-    try {
-      // Call Gemini API
-      const res = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'gemini-2.5-flash-preview-05-20',
-          prompt: input
-        })
-      });
-      const data = await res.json();
-      clearTimeout(timeout);
-      setTimeout(() => {
-        setResponse(data.text || 'Sorry, I could not generate a response.');
-        setShowResponse(true);
-        setLoading(false);
-      }, 300);
-    } catch (err) {
-      clearTimeout(timeout);
-      setTimeout(() => {
-        setResponse('Sorry, there was an error connecting to Gemini.');
-        setShowResponse(true);
-        setLoading(false);
-      }, 300);
-    }
-  };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
+    // Add user message to chat
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+
+    try {
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: userMessage })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get response');
+      }
+
+      setMessages(prev => [...prev, { role: 'assistant', content: data.text }]);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Sorry, I encountered an error processing your request.' 
+      }]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,18 +83,26 @@ function Home({ user, setUser }) {
         </div>
       </header>
       <main className="center-content">
-        {showResponse && (
-          <div className={`chat-content visible`}>
-            <div className="chat-message">
-              {response}
-            </div>
-          </div>
-        )}
-        {loading && (
-          <div className={`chat-content visible`}>
-            <div className="chat-message">
-              <span>Thinking...</span>
-            </div>
+        {isChatActive && (
+          <div className={`chat-content visible`} ref={chatContentRef}>
+            {messages.map((message, index) => (
+              <div key={index} className={`message ${message.role}`}>
+                <div className="message-content">
+                  {message.content}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div className="message assistant">
+                <div className="message-content">
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
         <div className={`prompt-box ${isChatActive ? 'chat-active' : ''}`}>
@@ -120,38 +116,30 @@ function Home({ user, setUser }) {
                 placeholder="Ask anything"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
                 spellCheck={false}
                 ref={inputRef}
-                disabled={loading}
               />
               <div className="input-actions">
-                <button type="submit" className="action-btn" disabled={loading}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2v20M2 12h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                  Send
-                </button>
-                <button type="button" className="action-btn">
+                <button className="action-btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                   Attach
                 </button>
-                <button type="button" className="action-btn">
+                <button className="action-btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
                     <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                   Search
                 </button>
-                <button type="button" className="action-btn">
+                <button className="action-btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2v20M2 12h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                   Reason
                 </button>
-                <button type="button" className="voice-btn">
+                <button className="voice-btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" stroke="currentColor" strokeWidth="2"/>
                     <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
