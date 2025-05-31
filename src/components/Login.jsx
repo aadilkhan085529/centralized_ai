@@ -2,15 +2,29 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
-function Login() {
+function Login({ setUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add login logic here
-    console.log('Login:', { email, password });
+    setError('');
+    try {
+      const res = await fetch('http://localhost:4000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Login failed');
+      localStorage.setItem('cai_user', JSON.stringify(data.user));
+      setUser(data.user);
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -47,6 +61,7 @@ function Login() {
                 required
               />
             </div>
+            {error && <div style={{color: 'red', marginBottom: 8}}>{error}</div>}
             <button type="submit" className="auth-submit">Continue</button>
           </form>
           <p className="auth-switch">

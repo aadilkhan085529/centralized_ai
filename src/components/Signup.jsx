@@ -6,12 +6,25 @@ function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add signup logic here
-    console.log('Signup:', { name, email, password });
+    setError('');
+    try {
+      const res = await fetch('http://localhost:4000/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Signup failed');
+      // Optionally store user info/token here
+      navigate('/login');
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -58,6 +71,7 @@ function Signup() {
                 required
               />
             </div>
+            {error && <div style={{color: 'red', marginBottom: 8}}>{error}</div>}
             <button type="submit" className="auth-submit">Create account</button>
           </form>
           <p className="auth-switch">

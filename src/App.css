@@ -75,6 +75,8 @@ body {
   justify-content: center;
   min-height: 100vh;
   padding-top: 0;
+  position: relative;
+  transition: all 0.3s ease-out;
 }
 
 .prompt-box {
@@ -85,6 +87,50 @@ body {
   max-width: calc(100vw - 2rem);
   margin: 0 1rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: all 0.3s ease-out;
+}
+
+.prompt-box.chat-active {
+  position: fixed;
+  bottom: 2rem;
+  transform: none;
+}
+
+.chat-content {
+  position: fixed;
+  top: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 45rem;
+  max-width: calc(100vw - 2rem);
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.chat-content.visible {
+  opacity: 1;
+}
+
+.chat-message {
+  background: #2a2b32;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  color: #e3e3e3;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .prompt-title {
@@ -93,6 +139,12 @@ body {
   color: #e3e3e3;
   text-align: center;
   font-weight: 400;
+  transition: opacity 0.3s ease-out;
+}
+
+.prompt-title.hidden {
+  opacity: 0;
+  position: absolute;
 }
 
 .input-row {
