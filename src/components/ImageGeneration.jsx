@@ -2,8 +2,8 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ImageGeneration.css';
 
+const base_url = 'http://localhost:4000';
 
-const base_url = 'https://aadil.pythonanywhere.com';
 
 
 function ImageGeneration({ user }) {

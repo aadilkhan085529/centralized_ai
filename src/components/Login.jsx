@@ -18,7 +18,8 @@ function Login({ setUser }) {
       const res = await fetch(`${base_url}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
       let data = {};
       const contentType = res.headers.get('content-type');

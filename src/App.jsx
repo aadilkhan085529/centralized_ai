@@ -46,7 +46,8 @@ function Home({ user, setUser }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: userMessage, reset: shouldReset })
+        body: JSON.stringify({ prompt: userMessage, reset: shouldReset }),
+        credentials: 'include',
       });
 
       setShouldReset(false); // Only reset on first message after refresh

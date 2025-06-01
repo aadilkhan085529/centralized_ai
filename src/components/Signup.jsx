@@ -18,7 +18,8 @@ function Signup() {
       const res = await fetch(`${base_url}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password }),
+        credentials: 'include',
       });
       let data = {};
       const contentType = res.headers.get('content-type');
