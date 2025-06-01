@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-d
 import { useState, useEffect, useRef } from 'react';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import ReactMarkdown from 'react-markdown';
 
 const base_url = '';
 
@@ -97,7 +98,7 @@ function Home({ user, setUser }) {
             {messages.map((message, index) => (
               <div key={index} className={`message ${message.role}`}>
                 <div className="message-content">
-                  {message.content}
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
                 </div>
               </div>
             ))}
