@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-d
 import { useState, useEffect, useRef } from 'react';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import ImageUpload from './components/ImageUpload';
 import ReactMarkdown from 'react-markdown';
 
 const base_url = '';
@@ -73,11 +74,21 @@ function Home({ user, setUser }) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 10h18M3 14h18M3 18h18M3 6h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
           </svg>
-          CAI
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          CAI          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-        </div>
+        </div>        <button
+          className="action-btn"
+          style={{ 
+            marginLeft: '2rem',
+            padding: '0.5rem 1rem',
+            fontSize: '0.9rem',
+            fontWeight: 500
+          }}
+          onClick={() => navigate('/image-upload')}
+        >
+          Image Tools
+        </button>
         <div className="auth-buttons">
           {user ? (
             <>
@@ -178,6 +189,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home user={user} setUser={setUser} />} />
+        <Route path="/image-upload" element={<ImageUpload user={user} setUser={setUser} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>

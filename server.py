@@ -1,10 +1,17 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_file, make_response
+
+
 from flask_cors import CORS
 import sqlite3
 import bcrypt
 import google.generativeai as genai
+import google.genai as genai2
 import os
 from uuid import uuid4
+from google.genai import types
+from PIL import Image
+from io import BytesIO
+import tempfile
 
 app = Flask(__name__)
 CORS(app)
@@ -147,6 +154,60 @@ def gemini_chat():
     except Exception as e:
         print(f"Gemini API error: {e}")
         return jsonify({"error": str(e)}), 500
+    
+
+
+@app.route('/colorize', methods=['POST'])
+def colorize():
+    if 'image' not in request.files or 'text' not in request.form:
+        return jsonify({'error': 'Image file and text prompt are required.'}), 400
+    file = request.files['image']
+    text_input = request.form['text']
+    try:
+        image = Image.open(file.stream)
+    except Exception as e:
+        return jsonify({'error': f'Invalid image file: {e}'}), 400
+
+    client = genai2.Client(api_key=GEMINI_API_KEY)
+    response = client.models.generate_content(
+        model="gemini-2.0-flash-preview-image-generation",
+        contents=[text_input, image],
+        config=types.GenerateContentConfig(
+            response_modalities=['TEXT', 'IMAGE']
+        )
+    )
+
+    output_text = None
+    output_image_bytes = None
+    output_image_mime = None
+    for part in response.candidates[0].content.parts:
+        if part.text is not None:
+            output_text = part.text
+        elif part.inline_data is not None:
+            mime_type = getattr(part.inline_data, 'mime_type', None)
+            data = part.inline_data.data
+            # Decode base64 if needed
+            if data[:8].decode(errors='ignore').startswith('iVBOR'):
+                import base64
+                data = base64.b64decode(data)
+            if mime_type in ["image/png", "image/jpeg", "image/jpg"]:
+                output_image_bytes = data
+                output_image_mime = mime_type
+    if output_image_bytes is None:
+        return jsonify({'error': 'No image generated.'}), 500
+    # Save image to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as tmp:
+        tmp.write(output_image_bytes)
+        tmp_path = tmp.name
+    response_data = {'text': output_text}
+    # Send both text and image
+    response = make_response(send_file(tmp_path, mimetype=output_image_mime, as_attachment=True, download_name='output.png'))
+    if output_text:
+        safe_text = output_text.replace('\n', ' ').replace('\r', ' ')
+        response.headers['X-Generated-Text'] = safe_text
+    return response
+
+
 
 if __name__ == '__main__':
     app.run(port=4000, debug=True)
