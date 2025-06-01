@@ -3,10 +3,11 @@ import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-d
 import { useState, useEffect, useRef } from 'react';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import ImageUpload from './components/ImageUpload';
+
+import ImageGeneration from './components/ImageGeneration';
 import ReactMarkdown from 'react-markdown';
 
-const base_url = '';
+const base_url = 'http://localhost:4000';
 
 function Home({ user, setUser }) {
   const navigate = useNavigate();
@@ -77,18 +78,30 @@ function Home({ user, setUser }) {
           CAI          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-        </div>        <button
-          className="action-btn"
-          style={{ 
-            marginLeft: '2rem',
-            padding: '0.5rem 1rem',
-            fontSize: '0.9rem',
-            fontWeight: 500
-          }}
-          onClick={() => navigate('/image-upload')}
-        >
-          Image Tools
-        </button>
+        </div>        <div style={{ marginLeft: '2rem', display: 'flex', gap: '1rem' }}>
+          <button
+            className="action-btn"
+            style={{ 
+              padding: '0.5rem 1rem',
+              fontSize: '0.9rem',
+              fontWeight: 500
+            }}
+            onClick={() => navigate('/image-generation')}
+          >
+            Image Tools
+          </button>
+          <button
+            className="action-btn"
+            style={{ 
+              padding: '0.5rem 1rem',
+              fontSize: '0.9rem',
+              fontWeight: 500
+            }}
+            onClick={() => navigate('/image-generation')}
+          >
+            Image Generation
+          </button>
+        </div>
         <div className="auth-buttons">
           {user ? (
             <>
@@ -186,10 +199,9 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
+    <Router>      <Routes>
         <Route path="/" element={<Home user={user} setUser={setUser} />} />
-        <Route path="/image-upload" element={<ImageUpload user={user} setUser={setUser} />} />
+        <Route path="/image-generation" element={<ImageGeneration user={user} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>

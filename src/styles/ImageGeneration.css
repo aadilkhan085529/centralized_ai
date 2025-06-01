@@ -1,0 +1,374 @@
+body, html {
+  overflow-x: hidden;
+}
+
+.image-generation-container {
+  min-height: 100vh;
+  background-color: #000;
+  color: #fff;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.image-generation-content {
+  width: 100vw;
+  height: calc(100vh - 64px); /* adjust for header height if needed */
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-generation-box {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.image-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.image-upload-section {
+  text-align: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #666;
+  border-radius: 8px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.file-input-label:hover {
+  border-color: #fff;
+}
+
+.file-input-label svg {
+  margin-bottom: 1rem;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+}
+
+.form-group textarea {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #666;
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: #fff;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #fff;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.submit-btn, .reset-btn {
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn {
+  background: #0066cc;
+  color: #fff;
+}
+
+.submit-btn:hover {
+  background: #0052a3;
+}
+
+.submit-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.reset-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid #666;
+}
+
+.reset-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.error-message {
+  color: #ff4444;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.image-generation-fixed-layout {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+.results-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.results-history {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  max-height: calc(100vh - 100  px); /* Adjust based on form height and header */
+  padding-bottom: 1rem;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.image-form-fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background: rgba(0,0,0,0.98);
+  box-shadow: 0 -2px 16px 0 rgba(0,0,0,0.2);
+  padding: 2rem 2rem 1.5rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .image-form-fixed {
+    max-width: 100vw;
+    padding: 1rem;
+  }
+}
+
+.result-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.result-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.result-info {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.result-images {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: stretch;
+  align-items: stretch;
+}
+
+.image-container {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.result-image {
+  width: 100%;
+  height: 320px;
+  max-width: 100%;
+  max-height: 50vh;
+  min-height: 120px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.result-description {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.result-text {
+  color: #ccc;
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.result-timestamp {
+  color: #666;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.delete-btn {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+.image-generation-row-layout {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100%;
+  min-height: 0;
+  gap: 0;
+  margin: 0;
+  position: relative;
+}
+
+.image-form-side {
+  position: fixed;
+  left: 0;
+  top: 64px; /* adjust if header height changes */
+  bottom: 0;
+  width: 32vw;
+  min-width: 320px;
+  max-width: 480px;
+  height: calc(100vh - 64px);
+  background: #101014;
+  border-radius: 0;
+  padding: 2rem 2rem 2rem 3vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: stretch;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 2;
+}
+
+.results-container-side {
+  position: fixed;
+  right: 0;
+  top: 64px;
+  bottom: 0;
+  left: 32vw;
+  min-width: 0;
+  height: calc(100vh - 64px);
+  background: #18181c;
+  padding: 2rem 3vw 2rem 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .image-form-side {
+    position: static;
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    height: auto;
+    padding: 1rem;
+    border-radius: 0;
+    top: 0;
+  }
+  .results-container-side {
+    position: static;
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    height: auto;
+    padding: 1rem;
+    border-radius: 0;
+    left: 0;
+    top: 0;
+  }
+  .image-generation-row-layout {
+    flex-direction: column;
+    height: auto;
+    gap: 1rem;
+  }
+}
