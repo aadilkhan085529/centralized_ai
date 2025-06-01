@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Login from './components/Login';
 import Signup from './components/Signup';
 
-const base_url = 'https://aadil.pythonanywhere.com';
+const base_url = '';
 
 function Home({ user, setUser }) {
   const navigate = useNavigate();
@@ -12,8 +12,13 @@ function Home({ user, setUser }) {
   const [isChatActive, setIsChatActive] = useState(false);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [shouldReset, setShouldReset] = useState(true); // Track if we need to reset context
   const chatContentRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    setShouldReset(true); // On mount/page refresh, set reset flag
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('cai_user');
@@ -38,8 +43,10 @@ function Home({ user, setUser }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: userMessage })
+        body: JSON.stringify({ prompt: userMessage, reset: shouldReset })
       });
+
+      setShouldReset(false); // Only reset on first message after refresh
 
       const data = await response.json();
       if (!response.ok) {

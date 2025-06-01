@@ -1,17 +1,22 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import sqlite3
 import bcrypt
 import google.generativeai as genai
 import os
+from uuid import uuid4
 
 app = Flask(__name__)
 CORS(app)
+app.secret_key = os.urandom(24)  # Required for session management
 
 # Setup Gemini API
 GEMINI_API_KEY = "AIzaSyBcje5c5qk-x__6V-AfOxKMkExw-frU0H0"
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash-8b')
+
+# Store chat models per session
+user_chats = {}
 
 # Database setup
 def init_db():
@@ -40,6 +45,13 @@ def get_db():
     db = sqlite3.connect('users.db')
     db.row_factory = sqlite3.Row
     return db
+
+@app.before_request
+def ensure_session():
+    if 'session_id' not in session:
+        session['session_id'] = str(uuid4())
+        # Always reset chat context for new session (e.g., after page refresh)
+        user_chats[session['session_id']] = model.start_chat(history=[])
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -114,18 +126,21 @@ def login():
 def gemini_chat():
     data = request.json
     prompt = data.get('prompt')
+    reset = data.get('reset', False)
     
     if not prompt:
         return jsonify({"error": "Prompt required"}), 400
-        
+    
+    session_id = session.get('session_id')
+    if reset or session_id not in user_chats:
+        user_chats[session_id] = model.start_chat(history=[])
+    chat_model = user_chats[session_id]
     try:
         print(f"Processing prompt: {prompt}")
-        response = model.generate_content(prompt)
-        
+        response = chat_model.send_message(prompt)
         if not response:
             print("No response received from Gemini")
             return jsonify({"error": "No response from API"}), 500
-            
         response_text = response.text
         print(f"Gemini response: {response_text}")
         return jsonify({"text": response_text})
