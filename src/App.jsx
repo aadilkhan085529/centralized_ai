@@ -7,7 +7,7 @@ import Signup from './components/Signup';
 import ImageGeneration from './components/ImageGeneration';
 import ReactMarkdown from 'react-markdown';
 
-const base_url = 'http://localhost:4000';
+const base_url = 'https://aadil.pythonanywhere.com';
 
 function Home({ user, setUser }) {
   const navigate = useNavigate();

@@ -2,7 +2,9 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ImageGeneration.css';
 
-const base_url = 'http://localhost:4000';
+
+const base_url = 'https://aadil.pythonanywhere.com';
+
 
 function ImageGeneration({ user }) {
   const navigate = useNavigate();
@@ -80,6 +82,53 @@ function ImageGeneration({ user }) {
 
   const handleDeleteResult = (timestamp) => {
     setGeneratedResults(prev => prev.filter(result => result.timestamp !== timestamp));
+  };
+
+  // Helper to convert a URL to a File object
+  const urlToFile = async (url, filename, mimeType) => {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: mimeType || blob.type });
+  };
+
+  // Handle click on result image (original or generated)
+  const handleResultImageClick = async (imgType, result) => {
+    if (imgType === 'original') {
+      // Use the original preview (base64)
+      setImagePreview(result.originalImage);
+      setDescription(result.description);
+      // Convert base64 to File so form can submit
+      if (result.originalImage.startsWith('data:')) {
+        const arr = result.originalImage.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        const file = new File([u8arr], 'original.png', { type: mime });
+        setSelectedImage(file);
+      } else {
+        setSelectedImage(null);
+      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } else if (imgType === 'generated') {
+      setLoading(true);
+      try {
+        const file = await urlToFile(result.url, 'generated.png');
+        setSelectedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+        setDescription(result.description);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
@@ -174,11 +223,11 @@ function ImageGeneration({ user }) {
                         <div className="result-images">
                           <div className="image-container">
                             <h3>Original Image</h3>
-                            <img src={result.originalImage} alt="Original" className="result-image original" />
+                            <img src={result.originalImage} alt="Original" className="result-image original" style={{cursor:'pointer'}} onClick={() => handleResultImageClick('original', result)} />
                           </div>
                           <div className="image-container">
                             <h3>Generated Image</h3>
-                            <img src={result.url} alt="Generated" className="result-image generated" />
+                            <img src={result.url} alt="Generated" className="result-image generated" style={{cursor:'pointer'}} onClick={() => handleResultImageClick('generated', result)} />
                           </div>
                         </div>
                       </div>
